@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Collaborative Document Editor</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    textarea { width: 100%; height: 400px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <h2>📝 Real-time Collaborative Editor</h2>
+  <textarea id="editor" placeholder="Start typing..."></textarea>
+
+  <script>
+    const socket = new WebSocket('ws://localhost:3000');
+
+    const editor = document.getElementById('editor');
+
+    // Send changes to the server
+    editor.addEventListener('input', () => {
+      socket.send(JSON.stringify({ text: editor.value }));
+    });
+
+    // Receive updates from the server
+    socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      if (data.text !== editor.value) {
+        editor.value = data.text;
+      }
+    };
+  </script>
+</body>
+</html>
